@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server'
 import { getClaim } from '@/lib/data'
 
+// In Next 15, `params` may be a Promise — await it.
 export async function GET(
-  _request: Request,
-  context: { params: { id: string } }
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }  // 👈 note Promise here
 ) {
-  const { id } = context.params
+  const { id } = await params                           // 👈 await it
   const claim = getClaim(id)
+
   if (!claim) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
